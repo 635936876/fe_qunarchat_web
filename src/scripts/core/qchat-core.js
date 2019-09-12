@@ -1415,6 +1415,10 @@
                             // 服务器给出key，chat ready
                             // 后续收发消息都依赖这个key
                             if (key) {
+                                var uid = converse.myId,
+                                    t = new Date().getTime() + '',
+                                    q_ckey = Base64.encode('u=' + uid + '&k=' + MD5.hexdigest(key + t).toUpperCase() + '&t=' + t);
+                                document.cookie = 'q_ckey=' + q_ckey + '; path=/;'
                                 converse.key = key;
                                 converse.chatDeffered.resolve();
                                 converse.onChatReady && converse.onChatReady(converse.myId, converse.key);
@@ -2036,6 +2040,7 @@
                 }
             },
             getVcard: function (strid) {
+                debugger
                 //统一使用一个接口
                 var args = [{
                     domain: converse.domain,
@@ -2526,6 +2531,7 @@
         };
 
         this.initConnection = function () {
+            // debugger
             if (this.connection && this.connection.connected) {
                 this.setUpXMLLogging();
                 this.onConnected();
@@ -2534,6 +2540,7 @@
                     throw new Error("initConnection: you must supply a value for either the bosh_service_url");
                 }
                 if (this.bosh_service_url) {
+                    // debugger
                     // Strophe.Connecion 会根据 service_url 判断使用websocket还是http-bind
                     this.connection = new Strophe.Connection(this.bosh_service_url);
                 } else {
