@@ -11,7 +11,8 @@ var config = {
 	// 获取近期（10天）联系人及之间的未读消息数量，返回联系人 + 消息数量
 	qchatUnreadList: '/package/qtapi/getrbl.qunar',
 	// 获取联系人头像、基本信息等
-	getQchatVCard: '/newapi/domain/get_vcard_info.qunar',
+	// getQchatVCard: '/newapi/domain/get_vcard_info.qunar',
+	getQchatVCard: '',
 	// 重新分配客服
 	getSeat: '/qcadmin/api/seat/judgmentOrRedistribution.json',
 	domain: window.nav_igator.baseaddess.domain

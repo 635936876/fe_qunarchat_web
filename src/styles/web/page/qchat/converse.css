@@ -41,7 +41,7 @@ body { background: #d4d4d4; font-family: "Microsoft Yahei"; }
     position: absolute;
     top: 64px;
     bottom: 10px;
-    right: 216px;
+    right: 10px;
     background: #f6f8f9;
     border: 1px solid #b4b4b4;
 }
@@ -57,11 +57,13 @@ body { background: #d4d4d4; font-family: "Microsoft Yahei"; }
     right: 10px;
     width: 200px;
     overflow: hidden;
+    display: none;
 }
 .left_sidebar {
     width: 286px;
     left: 10px;
     background-color: #f6f8f9;
+    display: none;
 }
 .lb_close .qchat-list {
     display: none;
@@ -82,7 +84,8 @@ body { background: #d4d4d4; font-family: "Microsoft Yahei"; }
     right: 0;
 }
 .lb_open .chat_window {
-    left: 296px;
+    /* left: 296px; */
+    left: 10px;
 }
 .lb_open .unread_num {
     display: none;

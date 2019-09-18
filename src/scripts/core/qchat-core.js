@@ -605,6 +605,7 @@
             }
 
             this.chatDeffered.done($.proxy(function () {
+                // 查询用户名片
                 this.chatBox.getCard(this.myId);
             }, this));
         };
@@ -1003,9 +1004,7 @@
             // 增加了consult消息之后会出现from, realfrom, to, realto
             // 这里传入的strid都是real部分
             getChatInfo: function (strid) {
-                //debugger
                 var info = converse.contactsCache[strid];
-
                 if (!info) {
                     return {
                         from: converse.connection.jid,
@@ -1104,6 +1103,7 @@
                 }
 
                 converse.chatDeffered.done($.proxy(function () {
+                    // 查询客服名片
                     contact.cardDeffered = this.getCard(strid);
                 }, this));
 
@@ -1532,7 +1532,8 @@
                     imageUrl = converse.myImage;
                 } else {
                     msg.sender = 'them';
-                    imageUrl = contact.chatImage || converse.defaultChatImage;
+                    imageUrl = converse.chatImage || converse.defaultChatImage;
+                    // imageUrl = contact.chatImage || converse.defaultChatImage;
                 }
 
                 msg.fullname = fullname;
@@ -1719,7 +1720,7 @@
                     contact.msgIds = [];
                 }
 
-                var chatInfo = this.getChatInfo(converse.strid)
+                //var chatInfo = this.getChatInfo(converse.strid)
                 var historyApi = '/package/qtapi/getmsgs.qunar', virtualParam = '';
 
                 // if(chatInfo && chatInfo.type === 'consult') {
@@ -2032,15 +2033,55 @@
             },
 
             getCard: function (strid) {
-                // 对于qtalk所在服务器，使用qtalk获取用户信息的接口
-                if (converse.toDomain === 'ejabhost1') {
-                    return this.getQtalkVcard(strid);
+                // 获取客服名片
+                if (true) {
+                    return this.getServiceVcard(strid);
                 } else {
                     return this.getVcard(strid);
                 }
             },
+            getServiceVcard: function (strid) {
+                var config = {
+                    url: '/i/api/seat/newinfo.qunar?qunarNames=' + converse.virtualId + ',' + strid,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json'
+                };
+
+                var deffered = $.ajax($.extend(config, {
+                    success: function (resp) {
+                        converse.log("vcard:" + JSON.stringify(resp));
+                        var card;
+                        if (resp.ret && resp.data.length) {
+                            card = resp.data[1];
+                            card.shopname = resp.data[0].nickname;
+                            if (!card) return;
+                            var contact = converse.stridContainer[strid];
+
+                            if (strid == converse.myId) {
+                                converse.myName = card.username;
+                                converse.myImage = card.imageurl;
+                                converse.onCard(card, true);
+                                converse.myNickName = card.webname;
+                                converse.myWebName = card.webname || '';
+                            } else {
+                                // converse.chatName = card.webname ? card.webname : card.username;
+                                converse.chatImage = card.imageurl;
+                                converse.onCard(card, false, converse.shopName);
+
+                                if (contact) {
+                                    contact.chatName = card.webname || card.nickname;
+                                    contact.chatImage = card.imageurl;
+                                }
+                            }
+                        }
+                    },
+                    error: function (error) { }
+                }));
+
+                return deffered;
+            },
             getVcard: function (strid) {
-                debugger
                 //统一使用一个接口
                 var args = [{
                     domain: converse.domain,
@@ -2614,7 +2655,7 @@
             // 第三方账号体系登陆 - 需要qchat后端提前支持
             // 
             // 拿到token之后使用用户名 + token登陆qchat服务器
-            if(false) {
+            if (false) {
                 // this.isUCenter
                 // 用户中心登录 -- 请求的时候根据cookie来获取token
                 ajaxOption.url = converse.http_api_server + 'http_gettoken';
@@ -2627,7 +2668,7 @@
                 ajaxOption.dataType = 'json';
                 ajaxOption.contentType = 'application/json; charset=utf-8';
                 ajaxOption.url = '/newapi/nck/get_anony_token.qunar';
-    
+
                 data = {
                     plat: fromHost,//web
                     version: 10010,
@@ -2648,7 +2689,53 @@
                 };
             }
 
-            $.ajax($.extend(ajaxOption, {
+            var anony_token_username,
+                anony_token_token;
+            var getCookie = document.cookie.replace(/[ ]/g, ""); //获取cookie，并且将获得的cookie格式化，去掉空格字符
+            var arrCookie = getCookie.split(";") //将获得的cookie以"分号"为标识 将cookie保存到arrCookie的数组中
+            var tips; //声明变量
+            for (var i = 0; i < arrCookie.length; i++) { //使用for循环查找cookie中的变量
+                var arr = arrCookie[i].split("="); //将单条cookie用"等号"为标识，将单条cookie保存为arr数组
+                if ('anony_token_username' == arr[0]) { //匹配变量名称，其中arr[0]是指的cookie名称，如果该条变量为则执行判断语句中的赋值操作
+                    anony_token_username = arr[1]; //将cookie的值赋给变量
+                }
+                if ('anony_token_token' == arr[0]) { //匹配变量名称，其中arr[0]是指的cookie名称，如果该条变量为则执行判断语句中的赋值操作
+                    anony_token_token = arr[1]; //将cookie的值赋给变量
+                }
+            }
+            var _q = document.cookie && document.cookie.match(/_q=([^;\s]+)/),
+                jid = anony_token_username || _q && _q.length > 1 && _q[1].substring(2),
+                token = password = anony_token_token;
+
+            // var _q = document.cookie && document.cookie.match(/_q=([^;\s]+)/),
+            //     jid = "c66b0b46a84c481f86c624b6162c2a61" || _q && _q.length > 1 && _q[1].substring(2),
+            //     token = password = '{"anony":{"plat":"web","uuid":"c66b0b46a84c481f86c624b6162c2a61","token":"6594d01b-ea2c-4d44-9cd7-28bce23dc7a2"}}';
+            if (jid) {
+                self.onAuthDone({
+                    userid: anony_token_username,
+                    username: anony_token_username,
+                    token: token,
+                    name: '',
+                    image: converse.defaultChatImage
+                });
+                // self.onAuthDone({
+                //     userid: 'c66b0b46a84c481f86c624b6162c2a61',
+                //     username: 'c66b0b46a84c481f86c624b6162c2a61',
+                //     token: '{"anony":{"plat":"web","uuid":"c66b0b46a84c481f86c624b6162c2a61","token":"6594d01b-ea2c-4d44-9cd7-28bce23dc7a2"}}',
+                //     name:  '',
+                //     image: converse.defaultChatImage
+                // });
+                // debugger
+                jid += "@" + converse.domain;
+
+                resource = Strophe.getResourceFromJid(jid);
+                if (!resource) {
+                    jid += '/web-' + Math.floor(Math.random() * 139749825).toString();
+                }
+            }
+
+            converse.connection.connect(jid, password, converse.onConnectStatusChanged);
+           /*  $.ajax($.extend(ajaxOption, {
                 success: function (data) {
                     //debugger
                     converse.log("ajax suc");
@@ -2660,6 +2747,9 @@
                             jid = data.data.username || _q && _q.length > 1 && _q[1].substring(2),
                             token = password = data.data.token;
 
+                        // var _q = document.cookie && document.cookie.match(/_q=([^;\s]+)/),
+                        //     jid = "c66b0b46a84c481f86c624b6162c2a61" || _q && _q.length > 1 && _q[1].substring(2),
+                        //     token = password = '{"anony":{"plat":"web","uuid":"c66b0b46a84c481f86c624b6162c2a61","token":"6594d01b-ea2c-4d44-9cd7-28bce23dc7a2"}}';
                         if (jid) {
                             self.onAuthDone({
                                 userid: data.data.username,
@@ -2668,7 +2758,14 @@
                                 name: data.data.name || '',
                                 image: data.data.image || converse.defaultChatImage
                             });
-
+                            // self.onAuthDone({
+                            //     userid: 'c66b0b46a84c481f86c624b6162c2a61',
+                            //     username: 'c66b0b46a84c481f86c624b6162c2a61',
+                            //     token: '{"anony":{"plat":"web","uuid":"c66b0b46a84c481f86c624b6162c2a61","token":"6594d01b-ea2c-4d44-9cd7-28bce23dc7a2"}}',
+                            //     name:  '',
+                            //     image: converse.defaultChatImage
+                            // });
+                            // debugger
                             jid += "@" + converse.domain;
 
                             resource = Strophe.getResourceFromJid(jid);
@@ -2699,7 +2796,7 @@
                     }
                 },
                 complete: function () { }
-            }));
+            })); */
         };
 
         // Initialization

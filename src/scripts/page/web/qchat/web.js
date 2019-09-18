@@ -384,8 +384,8 @@ $(document).ready(function() {
                 typeof shopName === 'string' && $supplierName.text(shopName);
                 $chatName.text('(' + consultName + ')');
             } else {
-                $supplierName.text('客服')
-                $chatName.text(consultName);
+                //$supplierName.text('客服')
+                //$chatName.text(consultName);
             }
         },
         
@@ -987,7 +987,7 @@ $(document).ready(function() {
             if(isMe) {
                 $(".ask_sub").attr("src", headImageURL);
             } else {
-                var supplierName = (data.suppliername ? data.suppliername : '客服');
+                var supplierName = (data.shopname ? data.shopname : '客服');
                 var chatName = (data.webname ? data.webname : data.username);
                 
                 //用户是店铺类型
@@ -996,7 +996,7 @@ $(document).ready(function() {
                     chatName = " (" + (data.webname || data.username) + ")";
                 }
                 if(supplierName) {
-                    $("#supplierName").text(supplierName + " ");
+                    $("#supplierName").text(supplierName + "-");
                 }
                 
                 $(".answer-sub").attr("src", headImageURL);

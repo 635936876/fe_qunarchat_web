@@ -35,6 +35,8 @@ $.ajax({
     data: JSON.stringify(data),
     contentType: 'application/json',
     success: function (res) {
+        document.cookie = 'anony_token_username=' + res.data.username + '; path=/;'
+        document.cookie = 'anony_token_token=' + res.data.token + '; path=/;'
         userQName = res.data.username;
     }
 });
@@ -52,16 +54,9 @@ $.ajax({
     }
 });
 
-var category = find("J_category"),
-    popCategory = find("J_popCategory"),
-    cateLi = category.getElementsByTagName("li"),
-    subItems = getClassName("sub-item", "div");
-category.onclick = function () {
-    popCategory.style.display = "block";
-};
-$(".button").click(function () {
-    var shopText = $(this).parent(".sub-item").attr("id"),
-        groupText = $(this).text(),
+$("li").click(function () {
+    var shopText = $(this).parent("ul").prev(".everyTitle").text().trim(),
+        groupText = $(this).text().trim(),
         shopId,
         groupId;
     var allSupplierName = [],
@@ -69,7 +64,7 @@ $(".button").click(function () {
     var selectSeatGroups;
     for (var i = 0; i < supplierData.length; i++) {
         allSupplierName.push(supplierData[i].supplierName)
-        if(supplierData[i].supplierName === shopText) {
+        if (supplierData[i].supplierName === shopText) {
             selectSeatGroups = supplierData[i].seatGroups
             shopId = supplierData[i].supplierId;
         }
@@ -93,23 +88,12 @@ $(".button").click(function () {
             if (res.ret && res.data) {
                 var strid = res.data.seat.qunarName;
                 var shopId = res.data.supplier.shopId;
-                console.log(res.data);
-                // window.location.href = '/webchat/touch/?shopId=' + shopId + '&strid=' + strid;
+                window.location.href = '/webchat/web/?shopId=' + shopId + '&strid=' + strid;
+            } else {
+                alert(res.msg);
             }
         }
     })
 })
-for (var i = 0; i < cateLi.length; i++) {
-    cateLi[i].index = i;
-    cateLi[i].onclick = function () {
-        for (var j = 0; j < subItems.length; j++) {
-            subItems[j].style.display = "none";
-            cateLi[j].style.background = "#f6f6f6";
-            cateLi[j].style.color = "#2d2d2d";
-        }
-        subItems[this.index].style.display = "block";
-        cateLi[this.index].style.background = "#fdfdfd";
-        cateLi[this.index].style.color = "#308dd3";
-    };
-}
+
 

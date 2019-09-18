@@ -1025,10 +1025,9 @@
                     $(".u-pic1").css({
                         'background-image': 'url(' + data.imageurl + ')'
                     });
-                    $(".txt-name-right").text(data.nickname);
+                    $(".txt-name-right").text(data.webname);
                 } else if (data.username === this.strid) {
-                    var name = data.nickname ? data.nickname : data.username;
-
+                    var name = data.webname ? data.webname : data.username;
                     if (this.shopId) {
                         $("#status").text(name);
                         document.title = $("#chatName").text() + '-' + name;
@@ -1036,6 +1035,7 @@
                         $("#chatName").text(name);
                         document.title = name + document.title.substring(document.title.lastIndexOf("-"));
                     }
+                    //debugger
                     $(".u-pic").css({
                         'background-image': 'url(' + data.imageurl + ')'
                     });
@@ -1723,26 +1723,40 @@
 
         // 获取店铺名称
         getShopName: function(shopId) {
-            var self = this,
-                u = self.converse.settings.get("myName"),
-                k = self.converse.settings.get("key"),
-                url = '/newapi/domain/get_vcard_info.qunar?u=' + u + '&k=' + k;
+            // var self = this,
+            //     u = self.converse.settings.get("myName"),
+            //     k = self.converse.settings.get("key"),
+            //     url = '/newapi/domain/get_vcard_info.qunar?u=' + u + '&k=' + k;
+            // $.ajax({
+            //     url: url,
+            //     type: 'POST',
+            //     dataType: 'json',
+            //     contentType: 'application/json',
+            //     data: JSON.stringify([{
+            //         domain: window.nav_igator.baseaddess.domain,
+            //         users: [{
+            //             user: shopId,
+            //             version: '2'
+            //         }]
+            //     }]),
+            //     success: function(res) {
+            //         if (res.ret && res.data && res.data[0] && res.data[0].users[0]) {
+            //             var data = res.data[0].users[0];
+
+            //             var name = data.nickname ? data.nickname : data.username;
+            //             $("#chatName").text(name);
+            //         }
+            //     }
+            // })
+            var url = '/i/api/seat/newinfo.qunar?qunarNames=' + shopId
             $.ajax({
                 url: url,
-                type: 'POST',
+                type: 'GET',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify([{
-                    domain: window.nav_igator.baseaddess.domain,
-                    users: [{
-                        user: shopId,
-                        version: '2'
-                    }]
-                }]),
-                success: function(res) {
-                    if (res.ret && res.data && res.data[0] && res.data[0].users[0]) {
-                        var data = res.data[0].users[0];
-
+                success: function (res) {
+                    if (res.ret && res.data) {
+                        var data = res.data[0];
                         var name = data.nickname ? data.nickname : data.username;
                         $("#chatName").text(name);
                     }
