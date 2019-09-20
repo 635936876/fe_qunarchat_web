@@ -72,38 +72,43 @@ window.onload = function () {
         var allSupplierName = [],
             allGroupName = [];
         var selectSeatGroups;
-        for (var i = 0; i < supplierData.length; i++) {
-            allSupplierName.push(supplierData[i].supplierName)
-            if (supplierData[i].supplierName === shopText) {
-                selectSeatGroups = supplierData[i].seatGroups
-                shopId = supplierData[i].supplierId;
+        if (supplierData !== undefined) {
+            for (var i = 0; i < supplierData.length; i++) {
+                allSupplierName.push(supplierData[i].supplierName)
+                if (supplierData[i].supplierName === shopText) {
+                    selectSeatGroups = supplierData[i].seatGroups
+                    shopId = supplierData[i].supplierId;
+                }
             }
         }
-        for (var j = 0; j < selectSeatGroups.length; j++) {
-            allGroupName.push(selectSeatGroups[j].groupName)
-            if (selectSeatGroups[j].groupName === groupText) {
-                groupId = selectSeatGroups[j].groupId;
+        if (selectSeatGroups !== undefined) {
+            for (var j = 0; j < selectSeatGroups.length; j++) {
+                allGroupName.push(selectSeatGroups[j].groupName)
+                if (selectSeatGroups[j].groupName === groupText) {
+                    groupId = selectSeatGroups[j].groupId;
+                }
             }
         }
         if (JSON.stringify(allSupplierName).search(shopText) === -1 || JSON.stringify(allGroupName).search(groupText) === -1) {
             alert("该服务暂无对应客服");
-        }
-        var url = '/api/seat/judgmentOrRedistributionEx.json?shopId=shop_' + shopId + '&groupId=' + groupId + '&userQName=' + userQName;
-        $.ajax({
-            url: url,
-            type: 'GET',
-            dataType: 'json',
-            contentType: 'application/json',
-            success: function (res) {
-                if (res.ret && res.data) {
-                    var strid = res.data.seat.qunarName;
-                    var shopId = res.data.supplier.shopId;
-                    window.location.href = '/webchat/touch/?shopId=' + shopId + '&strid=' + strid;
-                } else {
-                    alert(res.msg);
+        } else {
+            var url = '/api/seat/judgmentOrRedistributionEx.json?shopId=shop_' + shopId + '&groupId=' + groupId + '&userQName=' + userQName;
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (res) {
+                    if (res.ret && res.data) {
+                        var strid = res.data.seat.qunarName;
+                        var shopId = res.data.supplier.shopId;
+                        window.location.href = '/webchat/touch/?shopId=' + shopId + '&strid=' + strid;
+                    } else {
+                        alert(res.msg);
+                    }
                 }
-            }
-        })
+            })
+        }
     })
     for (var i = 0; i < cateLi.length; i++) {
         cateLi[i].index = i;
