@@ -213,7 +213,7 @@
                 for (var i = 0; i < emoticons.length; i++) {
                     var str = emoticons[i].replace(re, function () {
                         if (arguments && arguments.length > 2) {
-                            return '[obj type="emoticon" value="[' + arguments[3] + ']" width="EmojiOne" height=0]'
+                            return '[obj type="emoticon" value="[' + arguments[3] + ']" width=EmojiOne height=0]'
                         }
                     });
                     content = content.replace(emoticons[i], str);
