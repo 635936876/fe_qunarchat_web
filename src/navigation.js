@@ -6,7 +6,7 @@ window.nav_igator = {
         "shareurl": "http://100.80.129.108:8080/py/sharemsg",
         "xmppmport": 5222,
         "javaurl": "http://100.80.129.108:8080/package",
-        "fileurl": "http://100.80.129.108:8080",
+        "fileurl": "http://100.80.129.24:8080",
         "httpurl": "http://100.80.129.108:8080/newapi",
         "domainhost": "100.80.129.108",
         "appWeb": "http://100.80.129.108:8080/appWeb",

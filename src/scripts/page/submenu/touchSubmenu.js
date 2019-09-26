@@ -1,50 +1,26 @@
-function find() {
-    var elements = new Array();
-    for (var i = 0; i < arguments.length; i++) {
-        var element = arguments[i];
-        if (typeof element == "string")
-            element = document.getElementById(element);
-        if (arguments.length == 1) return element;
-        elements.push(element);
+var data = {
+    plat: 'web',//web
+    version: 10010,
+    gid: "",
+    uuidFlag: ""
+};
+var userQName;
+$.ajax({
+    url: '/newapi/nck/get_anony_token.qunar',
+    type: 'POST',
+    dataType: 'json',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
+    success: function (res) {
+        document.cookie = 'anony_token_username=' + res.data.username + '; path=/;'
+        document.cookie = 'anony_token_token=' + res.data.token + '; path=/;'
+        userQName = res.data.username;
+        getSupplierData();
     }
-    return elements;
-}
-//get ele's className
-function getClassName(className, tagName) {
-    var ele = [],
-        all = document.getElementsByTagName(tagName || "*");
-    for (var i = 0; i < all.length; i++) {
-        if (all[i].className == className) {
-            ele[ele.length] = all[i];
-        }
-    }
-    return ele;
-}
-function a(params) {
-    console.log(111)
-}
-window.onload = function () {
-    var data = {
-        plat: 'web',//web
-        version: 10010,
-        gid: "",
-        uuidFlag: ""
-    };
-    var userQName;
-    $.ajax({
-        url: '/newapi/nck/get_anony_token.qunar',
-        type: 'POST',
-        dataType: 'json',
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function (res) {
-            document.cookie = 'anony_token_username=' + res.data.username + '; path=/;'
-            document.cookie = 'anony_token_token=' + res.data.token + '; path=/;'
-            userQName = res.data.username;
-        }
-    });
+});
 
-    var supplierData;
+var supplierData;
+function getSupplierData() {
     $.ajax({
         url: '/api/supplier/supplierConfig.json',
         type: 'GET',
@@ -52,11 +28,27 @@ window.onload = function () {
         contentType: 'application/json',
         success: function (res) {
             if (res.ret && res.data) {
-                supplierData = res.data
+                supplierData = res.data;
+                toChat();
             }
         }
     });
+}
 
+function toChat() {
+    var submenu = $('#J_popCategory').children('.sub-item');
+    var str = "";
+    for (var m = 0; m < submenu.length; m++) {
+        for (var i = 0; i < supplierData.length; i++) {
+            if (supplierData[i].supplierName === submenu[m].id) {
+                for (var j = 0; j < supplierData[i].seatGroups.length; j++) {
+                    str += "<div class='button'>" + supplierData[i].seatGroups[j].groupName + "</div>"
+                    document.getElementById(submenu[m].id).innerHTML = str;
+                }
+                str = "";
+            }
+        }
+    }
     var category = find("J_category"),
         popCategory = find("J_popCategory"),
         cateLi = category.getElementsByTagName("li"),
@@ -124,3 +116,35 @@ window.onload = function () {
         };
     }
 }
+
+function find() {
+    var elements = new Array();
+    for (var i = 0; i < arguments.length; i++) {
+        var element = arguments[i];
+        if (typeof element == "string")
+            element = document.getElementById(element);
+        if (arguments.length == 1) return element;
+        elements.push(element);
+    }
+    return elements;
+}
+
+//get ele's className
+function getClassName(className, tagName) {
+    var ele = [],
+        all = document.getElementsByTagName(tagName || "*");
+    for (var i = 0; i < all.length; i++) {
+        if (all[i].className == className) {
+            ele[ele.length] = all[i];
+        }
+    }
+    return ele;
+}
+
+
+
+
+
+
+
+

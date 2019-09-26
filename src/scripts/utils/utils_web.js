@@ -94,7 +94,7 @@
                                 ret = '<img src="' + down_url + httpUrl + '"/>'
                             }
                             break;
-                        case 'emoticon':
+                        case 'emoticon':                     
                             // width 这里指的是表情包的category
                             ret = '<img src="{0}" title="{1}"/>'.format(utils.getEmoticonsUrl(down_url, val, width), val);
                             break;
@@ -171,7 +171,8 @@
             }
 
             // 默认的web端表情集
-            var faceCategory = category || 'EmojiOne';
+            // var faceCategory = category || 'EmojiOne';
+            var faceCategory = 'EmojiOne';
             var url = '{0}file/v1/emo/d/e/{1}/{2}/fixed'.format(domain, faceCategory, shortcut.replace('/', ''));
             return url;
         },
@@ -212,7 +213,7 @@
                 for (var i = 0; i < emoticons.length; i++) {
                     var str = emoticons[i].replace(re, function () {
                         if (arguments && arguments.length > 2) {
-                            return '[obj type="emoticon" value="[' + arguments[3] + ']"]'
+                            return '[obj type="emoticon" value="[' + arguments[3] + ']" width="EmojiOne" height=0]'
                         }
                     });
                     content = content.replace(emoticons[i], str);

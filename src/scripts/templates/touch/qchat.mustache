@@ -3,9 +3,6 @@
     <header class="header">
         <div class="goback"></div>
         <div class="title"><span id="chatName">客服</span>-<span id="status">连接中</span></div>
-        {{#supportZuji}}
-            <div class="history ops" id="history-page">足迹</div>
-        {{/supportZuji}}
     </header>
     <section class="m-chat wrapperApp" id="wrapper">
         <div class="chat-list">
@@ -99,41 +96,5 @@
     <div class="swiper-pagination"></div>
 </div>
 
-<div class="browser-history" id="browser-history" style="visibility: hidden;">
-    <div class="history-left" id="history-left"></div>
-    <div class="history-right">
-        <div class="history-head"><span class="header-title">最近浏览足迹</span></div>
-        <div class="history-wrapper">
-            <div class="history-container" id="history-container">
-                <div id="history-loading-tip" class="yo-loadtip" style="display: none;">
-                    <i class="yo-ico yo-ico-loading history-load-tip" id="load-tip-message"></i>
-                </div>
-            </div>
-        </div>
-        <div class="history-no-result" id="history-no-result" style="display: none;">
-            <span>您还没有浏览记录</span>
-        </div>
-    </div>
-</div>
 
-<div class="m_mask" id="filter-mask" style="display: none;"></div>
-{{!全局mask}}
-<div id="global-mask" class="global-mask hide"></div>
-{{!验证码模块}}
-<div class="captcha-box hide" id="captcha-box">
-    <div id="captcha" class="captcha-inner">
-        <p class="tit">您发送消息的频率过快，请输入下面的验证码，证明您不是机器人</p>
-        <div class="code-box">
-            <input type="input" class="captcha-code">
-            {{! 需使用者提供,验证码图片地址 }}
-            <img class="code-img" src="">
-            <div class="captcha-error hide" id="errmsg">
-                <i class="btn-red"></i>
-                <span>图形验证码错误</span>
-            </div>
-        </div>
-        <div class="captcha-submit">
-            <a class="sub-btn">提交</a>
-        </div>
-    </div>
-</div>
+

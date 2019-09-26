@@ -121,6 +121,7 @@ body {
     margin-left: 22%;
     margin-top: 5%;
     padding: 2%;
+    display:table;
 }
 .center .title {
     height: 22px;
@@ -137,6 +138,7 @@ body {
 .menu {
     color: #555555;
     width: 100%;
+    display:table;
 }
 li {
     height: 40px;

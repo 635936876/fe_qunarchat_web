@@ -200,6 +200,7 @@ body { background: #d4d4d4; font-family: "Microsoft Yahei"; }
     left: 0;
     top: 0;
     zoom: 1;
+    border-radius: 1000px;
 }
 .dialog .talk_ddr .answer_talk {
     color: #383a3a;
@@ -241,6 +242,7 @@ body { background: #d4d4d4; font-family: "Microsoft Yahei"; }
     position: absolute;
     right: 0;
     top: 0;
+    border-radius: 1000px;
 }
 .dialog .talk_me .ask_talk {
     float: right;

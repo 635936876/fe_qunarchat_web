@@ -10,6 +10,7 @@ var IS_DEBUG = false;
 var config = {
 	// 获取近期（10天）联系人及之间的未读消息数量，返回联系人 + 消息数量
 	qchatUnreadList: '/package/qtapi/getrbl.qunar',
+	//qchatUnreadList: '',
 	// 获取联系人头像、基本信息等
 	// getQchatVCard: '/newapi/domain/get_vcard_info.qunar',
 	getQchatVCard: '',
@@ -171,8 +172,7 @@ var LeftBar = {
 	},
 	// 加载联系人列表
 	loadingContact: function() {
-		var self = this;
-
+		var self = this;	
 		$.ajax({
 			url: config.qchatUnreadList,
 			type: 'POST',

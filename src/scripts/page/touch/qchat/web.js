@@ -19,7 +19,7 @@
 
     var c2bOrderInfo = require('common/c2bOrderInfo.js'); // 获取C2B订单信息
 
-    var unreadTip = require('./unreadTip/index');
+    // var unreadTip = require('./unreadTip/index');
     
     var smartRobot = require('common/smartRobot');
     var notify = require('common/notify');
@@ -42,6 +42,8 @@
         // 暂无提供接口,更新客服开始最近一个会话的时间
         chatReadyConfirm: ''
     };
+    // 默认头像
+    var defaultHeadImage = '../../../../assets/png/defaultAvatar.png';
     var bosh_service_url = '/http-bind/';
     var http_api_server = XMPP_URL + 'api/';
     var loginDialog = require('./loginDialog.js');
@@ -790,6 +792,7 @@
                                                     // webMyName: self.converse.myNickName,
                                                     'webMyName': qChatInstance.setting.isAnonymous?"我":self.converse.myNickName,
                                                     'webYourName': self.converse.myNickName,
+                                                    'newWebName': self.converse.yourWebName,
                                                     imgMessage: true
                                                 }));
 
@@ -827,6 +830,7 @@
                                             // webMyName: self.converse.myNickName,
                                             'webMyName': qChatInstance.setting.isAnonymous?"我":self.converse.myNickName,
                                             'webYourName': self.converse.myNickName,
+                                            'newWebName': self.converse.yourWebName,
                                             imgMessage: true
                                         }));
 
@@ -899,7 +903,8 @@
                                             webSenderName: self.converse.settings.get('chatName'),
                                             // webMyName: self.converse.settings.get('myNickName')
                                             'webMyName':qChatInstance.setting.isAnonymous?"我":self.converse.settings.get('myNickName'),
-                                            'webYourName': self.converse.settings.get('myNickName')
+                                            'webYourName': self.converse.settings.get('myNickName'),
+                                            'newWebName': self.converse.settings.get('yourWebName')
                                         });
                                         data.context = $(msgTml).appendTo('#msg_list');
                                         $(data.context).find('p').first().addClass('imgloading').append('<i class="yo-ico yo-ico-loading"></i><span class="number">0</span>%');
@@ -1020,10 +1025,15 @@
             }
         },
         onCard: function(data, isMe) {
+            //因为头像是ajax获取，如果是历史消息的话有可能不存在
+            var headImageURL = defaultHeadImage; //默认头图
             if (data) {
                 if (isMe) {
+                    if(data && data.imageurl) {
+                        headImageURL = data.imageurl;
+                    }
                     $(".u-pic1").css({
-                        'background-image': 'url(' + data.imageurl + ')'
+                        'background-image': 'url(' + headImageURL + ')'
                     });
                     $(".txt-name-right").text(data.webname);
                 } else if (data.username === this.strid) {
@@ -1105,17 +1115,17 @@
                     isSysMsg = false,
                     isMe = msg_dict.sender == 'me';
 
-                // 屏蔽其他人消息
-                if (!isMe) {
-                    if (+msg_type === 1 &&
-                        ((msg_dict.topType === 'chat' && msg_dict.from !== currentStrid) ||
-                        (msg_dict.topType === 'consult' && msg_dict.realFrom !== currentStrid))) {
-                        if (!msg_dict.history) {
-                            unreadTip.show();
-                            return;
-                        }
-                    }
-                }
+                // // 屏蔽其他人消息
+                // if (!isMe) {
+                //     if (+msg_type === 1 &&
+                //         ((msg_dict.topType === 'chat' && msg_dict.from !== currentStrid) ||
+                //         (msg_dict.topType === 'consult' && msg_dict.realFrom !== currentStrid))) {
+                //         if (!msg_dict.history) {
+                //             unreadTip.show();
+                //             return;
+                //         }
+                //     }
+                // }
 
                 if (msg_type && msg_type == "10" && msg_dict.sender === 'me') {
                     text = "您发送了一个窗口抖动";
@@ -1172,6 +1182,7 @@
                         // 'webMyName': myWebName,
                         'webMyName': qChatInstance.setting.isAnonymous?"我":myWebName,//匿名登录时显示 我
                         'webYourName': myWebName,
+                        'newWebName': self.converse.settings.get('yourWebName'),
                         isSysMsg: isSysMsg
                     });
                 }
@@ -1723,45 +1734,45 @@
 
         // 获取店铺名称
         getShopName: function(shopId) {
-            // var self = this,
-            //     u = self.converse.settings.get("myName"),
-            //     k = self.converse.settings.get("key"),
-            //     url = '/newapi/domain/get_vcard_info.qunar?u=' + u + '&k=' + k;
-            // $.ajax({
-            //     url: url,
-            //     type: 'POST',
-            //     dataType: 'json',
-            //     contentType: 'application/json',
-            //     data: JSON.stringify([{
-            //         domain: window.nav_igator.baseaddess.domain,
-            //         users: [{
-            //             user: shopId,
-            //             version: '2'
-            //         }]
-            //     }]),
-            //     success: function(res) {
-            //         if (res.ret && res.data && res.data[0] && res.data[0].users[0]) {
-            //             var data = res.data[0].users[0];
-
-            //             var name = data.nickname ? data.nickname : data.username;
-            //             $("#chatName").text(name);
-            //         }
-            //     }
-            // })
-            var url = '/i/api/seat/newinfo.qunar?qunarNames=' + shopId
+            var self = this,
+                u = self.converse.settings.get("myName"),
+                k = self.converse.settings.get("key"),
+                url = '/newapi/domain/get_vcard_info.qunar?u=' + u + '&k=' + k;
             $.ajax({
                 url: url,
-                type: 'GET',
+                type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                success: function (res) {
-                    if (res.ret && res.data) {
-                        var data = res.data[0];
+                data: JSON.stringify([{
+                    domain: window.nav_igator.baseaddess.domain,
+                    users: [{
+                        user: shopId,
+                        version: '2'
+                    }]
+                }]),
+                success: function(res) {
+                    if (res.ret && res.data && res.data[0] && res.data[0].users[0]) {
+                        var data = res.data[0].users[0];
+
                         var name = data.nickname ? data.nickname : data.username;
                         $("#chatName").text(name);
                     }
                 }
             })
+            // var url = '/i/api/seat/newinfo.qunar?qunarNames=' + shopId
+            // $.ajax({
+            //     url: url,
+            //     type: 'GET',
+            //     dataType: 'json',
+            //     contentType: 'application/json',
+            //     success: function (res) {
+            //         if (res.ret && res.data) {
+            //             var data = res.data[0];
+            //             var name = data.nickname ? data.nickname : data.username;
+            //             $("#chatName").text(name);
+            //         }
+            //     }
+            // })
         },
         sendChatConfirm: function() {
             var self = this;

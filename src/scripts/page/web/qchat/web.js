@@ -995,12 +995,16 @@ $(document).ready(function() {
                     supplierName = shopName || data.nickname;
                     chatName = " (" + (data.webname || data.username) + ")";
                 }
-                if(supplierName) {
-                    $("#supplierName").text(supplierName + "-");
-                }
-                
+                // if(supplierName) {
+                //     $("#supplierName").text(supplierName + "-");
+                // }               
+                // $(".answer-sub").attr("src", headImageURL);
+                // $("#chatName").text(chatName);
+                $("#supplierName").text("客服");              
                 $(".answer-sub").attr("src", headImageURL);
-                $("#chatName").text(chatName);
+                if(data && data.webname) {
+                    $("#chatName").text("-" + data.webname);
+                }              
             }
         },
         
