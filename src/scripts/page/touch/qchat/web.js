@@ -32,6 +32,7 @@
     var LEAVE_MESSAGE_02 = '<p class="lm-info">如需客服电话联系您，可以发送联系方式给客服，客服看到后会第一时间联系您哦！</p>';
     var DOWN_URL = window.nav_igator.baseaddess.fileurl;
     var XMPP_URL = window.nav_igator.baseaddess.xmpp;
+    var SOCKET_URL = window.nav_igator.baseaddess.socketurl;
     var imageUpload_url = window.nav_igator.baseaddess.fileurl;
     var showImg_url = window.nav_igator.baseaddess.fileurl;
     var sendwap_url =  '/qcadmin/api/setids';
@@ -43,7 +44,7 @@
         chatReadyConfirm: ''
     };
     var bosh_service_url = '/http-bind/';
-    var http_api_server = XMPP_URL + 'api/';
+    var http_api_server = XMPP_URL + '/api/';
     var loginDialog = require('./loginDialog.js');
     var show_time_old, show_time_new;
     var show_msg_interval = 1000 * 60 * 2;
@@ -85,7 +86,7 @@
         //debugger
         // 检查是否支持web socket协议；如果支持切换到web socket
         if(utils.isSupportWebSocket()) {
-            bosh_service_url = 'ws:' + XMPP_URL + '/websocket';
+            bosh_service_url = SOCKET_URL;
         }
 
         this.setting = {

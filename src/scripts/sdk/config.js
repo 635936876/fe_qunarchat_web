@@ -5,7 +5,7 @@ var settings = {
     server: {
         bosh_service_url: domain + 'http-bind/',
         webSocket_boah_service_url: 'ws:' + domain + 'websocket',
-        http_api_server: domain + 'api/'
+        http_api_server: domain + '/api/'
     },
     // 设备类型
     maType: sniff.iphone ? 8 : sniff.ipod ? 9 : sniff.ipad ? 10 : sniff.android ? 11 : sniff.pc ? 6 : 7,

@@ -1,20 +1,27 @@
 window.nav_igator = {
+    "Login": {
+        "loginType": "password"
+    },
+    "version": 1,
     "baseaddess": {
         "domain": "im5.startalk.com",
-        "xmppport": 5222,
+        "videourl": "https://150.242.184.16:8443/room",
+        "fileurl": "http://150.242.184.16:8080",
+        "appWeb": "http://150.242.184.16:8080/appWeb",
+        "shareurl": "http://150.242.184.16:8080/py/sharemsg",
+        "resetPwdUrl": "http://150.242.184.16:8080/static/reterievepassword.html",
+        "httpurl": "http://150.242.184.16:8080/newapi",
         "protobufPcPort": 5202,
-        "shareurl": "http://100.80.129.108:8080/py/sharemsg",
-        "xmppmport": 5222,
-        "javaurl": "http://100.80.129.108:8080/package",
-        "fileurl": "http://100.80.129.24:8080",
-        "httpurl": "http://100.80.129.108:8080/newapi",
-        "domainhost": "100.80.129.108",
-        "appWeb": "http://100.80.129.108:8080/appWeb",
-        "apiurl": "http://100.80.129.108:8080/api",
-        "resetPwdUrl": "http://100.80.129.108:8080/static/reterievepassword.html",
+        "socketurl": "ws://150.242.184.16:5280/websocket",
         "pubkey": "rsa_public_key",
-        "simpleapiurl": "http://100.80.129.108:8080",
-        "xmpp": "100.80.129.108:5280",
+        "xmppmport": 5222,
+        "xmppport": 5222,
+        "domainhost": "150.242.184.16",
+        "simpleapiurl": "http://150.242.184.16:8080",
+        "payurl": "http://150.242.184.16:8080/redpackage",
+        "apiurl": "http://150.242.184.16:8080/api",
+        "javaurl": "http://150.242.184.16:8080/package",
+        "xmpp": "150.242.184.16" + ":5280",
         "protobufPort": 5202
-      }
-  };
+    }
+};

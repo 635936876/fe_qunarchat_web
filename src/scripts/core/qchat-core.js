@@ -2605,17 +2605,32 @@
                 dataType: 'jsonp',
                 type: 'GET',
             }
-
+            var real_username,
+                real_password;
+            var getCookie = document.cookie.replace(/[ ]/g, ""); //获取cookie，并且将获得的cookie格式化，去掉空格字符
+            var arrCookie = getCookie.split(";") //将获得的cookie以"分号"为标识 将cookie保存到arrCookie的数组中
+            var tips; //声明变量
+            for (var i = 0; i < arrCookie.length; i++) { //使用for循环查找cookie中的变量
+                var arr = arrCookie[i].split("="); //将单条cookie用"等号"为标识，将单条cookie保存为arr数组
+                if ('username' == arr[0]) { //匹配变量名称，其中arr[0]是指的cookie名称，如果该条变量为则执行判断语句中的赋值操作
+                    real_username = arr[1]; //将cookie的值赋给变量
+                }
+                if ('password' == arr[0]) { //匹配变量名称，其中arr[0]是指的cookie名称，如果该条变量为则执行判断语句中的赋值操作
+                    real_password = arr[1]; //将cookie的值赋给变量
+                }
+            }
             // 用户中心登陆
             // 匿名登陆
             // 第三方账号体系登陆 - 需要qchat后端提前支持
             // 
             // 拿到token之后使用用户名 + token登陆qchat服务器
-            if(false) {
+            if (real_username !== undefined && real_password !== undefined) {
                 // this.isUCenter
                 // 用户中心登录 -- 请求的时候根据cookie来获取token
-                ajaxOption.url = converse.http_api_server + 'http_gettoken';
-            } else if (true) {
+                // ajaxOption.url = converse.http_api_server + 'http_gettoken';
+                real_username += "@" + converse.domain;
+                converse.connection.connect(real_username, real_password, converse.onConnectStatusChanged);
+            } else {
                 // this.isAnonymous
                 //匿名登录
                 //var fromHost = "startalkWeb";
@@ -2636,67 +2651,59 @@
                     data.uuidFlag = Base64.encode(qn1[1]);
                 }
                 ajaxOption.data = JSON.stringify(data);//contentType是json，浏览器显示为payload
-            } else {
-                // 其他业务线登录的common接口
-                ajaxOption.url = converse.http_api_server + 'mcenter/gettoken';
-                ajaxOption.data = {
-                    currentId: this.busiLoginId,
-                    type: this.busiLoginType
-                };
-            }
+                $.ajax($.extend(ajaxOption, {
+                    success: function (data) {
+                        //debugger
+                        converse.log("ajax suc");
+                        // switchOn 匿名登录开关 否则跳到登录页
+                        if (false) {
+                            self.onAuthFail('Get Token (ajax) Failed.');
+                        } else if (data && data.data) {
+                            var _q = document.cookie && document.cookie.match(/_q=([^;\s]+)/),
+                                jid = data.data.username || _q && _q.length > 1 && _q[1].substring(2),
+                                token = password = data.data.token;
 
-            $.ajax($.extend(ajaxOption, {
-                success: function (data) {
-                    //debugger
-                    converse.log("ajax suc");
-                    // switchOn 匿名登录开关 否则跳到登录页
-                    if (false) {
-                        self.onAuthFail('Get Token (ajax) Failed.');
-                    } else if (data && data.data) {
-                        var _q = document.cookie && document.cookie.match(/_q=([^;\s]+)/),
-                            jid = data.data.username || _q && _q.length > 1 && _q[1].substring(2),
-                            token = password = data.data.token;
+                            if (jid) {
+                                self.onAuthDone({
+                                    userid: data.data.username,
+                                    username: data.data.username,
+                                    token: token,
+                                    name: data.data.name || '',
+                                    image: data.data.image || converse.defaultChatImage
+                                });
 
-                        if (jid) {
-                            self.onAuthDone({
-                                userid: data.data.username,
-                                username: data.data.username,
-                                token: token,
-                                name: data.data.name || '',
-                                image: data.data.image || converse.defaultChatImage
-                            });
+                                jid += "@" + converse.domain;
 
-                            jid += "@" + converse.domain;
-
-                            resource = Strophe.getResourceFromJid(jid);
-                            if (!resource) {
-                                jid += '/web-' + Math.floor(Math.random() * 139749825).toString();
+                                resource = Strophe.getResourceFromJid(jid);
+                                if (!resource) {
+                                    jid += '/web-' + Math.floor(Math.random() * 139749825).toString();
+                                }
                             }
-                        }
+                            converse.connection.connect(jid, password, converse.onConnectStatusChanged);
+                        } else {
+                            if (self.loginCount < self.loginMaxTryCount) {
+                                setTimeout(function () {
+                                    self.loginForCookie();
+                                }, 1000);
+                            } else {
+                                self.onAuthFail('Get Token (ajax) Failed.');
+                            }
 
-                        converse.connection.connect(jid, password, converse.onConnectStatusChanged);
-                    } else {
-                        if (self.loginCount < self.loginMaxTryCount) {
+                        }
+                    },
+                    error: function (error) {
+                        if (self.loginCount < 5) {
                             setTimeout(function () {
                                 self.loginForCookie();
                             }, 1000);
                         } else {
                             self.onAuthFail('Get Token (ajax) Failed.');
                         }
-
-                    }
-                },
-                error: function (error) {
-                    if (self.loginCount < 5) {
-                        setTimeout(function () {
-                            self.loginForCookie();
-                        }, 1000);
-                    } else {
-                        self.onAuthFail('Get Token (ajax) Failed.');
-                    }
-                },
-                complete: function () { }
-            }));
+                    },
+                    complete: function () { }
+                }));
+                
+            }
         };
 
         // Initialization

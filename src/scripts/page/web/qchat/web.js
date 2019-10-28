@@ -61,16 +61,18 @@ $(document).ready(function() {
     var LEAVE_MESSAGE_02 = '<div class="talk_me clr"><div class="prompt clr">如需客服电话联系您，可以<a id="js_lm" class="js_lm">发送联系方式</a>给客服，客服看到后会第一时间联系您哦！</div></div>';
     var DOWN_URL = window.nav_igator.baseaddess.fileurl;
     var XMPP_URL = window.nav_igator.baseaddess.xmpp;
+    var SOCKET_URL = window.nav_igator.baseaddess.socketurl;
     //var bosh_service_url = "http://" + XMPP_URL + '/http-bind/';
     var bosh_service_url = '/http-bind/';
-    var http_api_server = XMPP_URL + 'api/';
+    var http_api_server = XMPP_URL + '/api/';
     var loginDialog = require("./loginDialog.js");
 
     var QCAdminApis = {
         // rightbar的detail展示数据
         detailUrl: '/qcadmin/api/pdt/productDtl.qunar',
         // 最近咨询
-        recentProUrl: '/qcadmin/api/pdt/lastOne.json',
+        // recentProUrl: '/qcadmin/api/pdt/lastOne.json',
+        recentProUrl: '',
         // 暂无提供接口,更新客服开始最近一个会话的时间
         chatReadyConfirm: ''
     };
@@ -94,7 +96,7 @@ $(document).ready(function() {
         var canUseWebSocket =  utils.isSupportWebSocket();
 
         if(canUseWebSocket) {
-            bosh_service_url = (location.protocol === 'https:' ? 'wss:' : 'ws:') + XMPP_URL + '/websocket';
+            bosh_service_url = SOCKET_URL;
         }
 
         this.setting = {
