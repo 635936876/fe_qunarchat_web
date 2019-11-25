@@ -7,7 +7,6 @@ $.ajax({
 	type: 'GET',
 	success: function (res) {
 		pubKeyFullkey = res.data.pub_key_fullkey;
-		console.log(pubKeyFullkey);
 	}
 });
 
@@ -30,25 +29,18 @@ $("#submit").click(function () {
 			u: logname,
 			d: dayjs().format('YYYY-MM-DD HH:mm:ss')
 		};
-		console.log(logname);
-		console.log(logpass);
-		console.log(uinfo);
-		debugger
 		username = logname;
-		password = jsencrypt.encrypt(uinfo);
-		console.log(password);
+		password = jsencrypt.encrypt(JSON.stringify(uinfo)).toString('base64');
 		document.cookie = 'username=' + username + '; path=/;'
 		document.cookie = 'password=' + password + '; path=/;'
 		var phone = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
-		// if (!phone) {
-		//   window.location.href = '/webchat/web/?shopId=shop_1&strid=admin'
-		// } else {
-		//   window.location.href = '/webchat/touch/?shopId=shop_1&strid=admin'
-		// } 
+		if (!phone) {
+		  window.location.href = '/webchat/web/?shopId=shop_1&strid=admin'
+		} else {
+		  window.location.href = '/webchat/touch/?shopId=shop_1&strid=admin'
+		} 
 	} else if (window.nav_igator.Login.loginType === 'newpassword') {
 		var newEncrypted = jsencrypt.encrypt(logpass);
-		debugger
-		console.log(newEncrypted);
 		var requestData = {
 			p: newEncrypted,
 			h: window.nav_igator.baseaddess.domain,
@@ -63,8 +55,6 @@ $("#submit").click(function () {
 			data: JSON.stringify(requestData),
 			contentType: 'application/json',
 			success: function (res) {
-				console.log(res);
-				debugger
 				var token = res.data.t;
 				var uinfo = {
 					nauth: {
@@ -78,11 +68,11 @@ $("#submit").click(function () {
 				document.cookie = 'username=' + username + '; path=/;'
 				document.cookie = 'password=' + password + '; path=/;'
 				var phone = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
-				// if (!phone) {
-				//   window.location.href = '/webchat/web/?shopId=shop_1&strid=admin'
-				// } else {
-				//   window.location.href = '/webchat/touch/?shopId=shop_1&strid=admin'
-				// } 
+				if (!phone) {
+				  window.location.href = '/webchat/web/?shopId=shop_1&strid=admin'
+				} else {
+				  window.location.href = '/webchat/touch/?shopId=shop_1&strid=admin'
+				} 
 			}
 		});
 	}
